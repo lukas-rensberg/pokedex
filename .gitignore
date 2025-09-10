@@ -1,0 +1,40 @@
+# Node.js Dependencies (if Node.js is used)
+node_modules/
+
+# Log files
+*.log
+
+# Build-Folder / Output-Folder (if a build tool is used)
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files / sensitive data
+.env
+.env.local
+.env.*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Cache-Folder
+.cache/
+
+# Archive
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
