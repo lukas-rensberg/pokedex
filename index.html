@@ -33,12 +33,89 @@
                     <div class="filters">
                         <select id="typeFilter" class="filter-select">
                             <option value="">Alle Typen</option>
-                
+                            <option value="fire">Feuer</option>
+                            <option value="water">Wasser</option>
+                            <option value="grass">Pflanze</option>
+                            <option value="electric">Elektro</option>
+                            <option value="psychic">Psycho</option>
+                            <option value="ice">Eis</option>
+                            <option value="dragon">Drachen</option>
+                            <option value="dark">Dunkel</option>
+                            <option value="fighting">Kampf</option>
+                            <option value="poison">Gift</option>
+                            <option value="ground">Boden</option>
+                            <option value="flying">Flug</option>
+                            <option value="bug">Käfer</option>
+                            <option value="rock">Stein</option>
+                            <option value="ghost">Geist</option>
+                            <option value="steel">Stahl</option>
+                            <option value="fairy">Fee</option>
+                            <option value="normal">Normal</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </header>
 
+        <div id="loadingIndicator" class="loading-indicator">
+            <div class="pokeball-spinner"></div>
+            <p>Lade Pokémon...</p>
+        </div>
+
+        <div class="load-more-section" id="loadMoreSection">
+            <button id="loadMoreButton" class="load-more-button">
+                <span class="load-more-text">Mehr Pokémon laden</span>
+                <span class="load-more-count" id="loadMoreCount">(30 mehr)</span>
+            </button>
+        </div>
+
         <main class="pokemon-grid" id="pokemonGrid">
-            <!-- Pokemon cards will go here -->
+            <!-- Placeholder Pokemon cards for testing -->
+            <div class="pokemon-card type-fire">
+                <div class="pokemon-card-header">
+                    <h3 class="pokemon-name">CHARMANDER</h3>
+                    <div class="pokemon-id">#004</div>
+                </div>
+                <div class="pokemon-card-body">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png" alt="Charmander" class="pokemon-image">
+                    <div class="pokemon-info">
+                        <div class="pokemon-types">
+                            <span class="pokemon-type type-fire">FIRE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pokemon-card type-water">
+                <div class="pokemon-card-header">
+                    <h3 class="pokemon-name">SQUIRTLE</h3>
+                    <div class="pokemon-id">#007</div>
+                </div>
+                <div class="pokemon-card-body">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png" alt="Squirtle" class="pokemon-image">
+                    <div class="pokemon-info">
+                        <div class="pokemon-types">
+                            <span class="pokemon-type type-water">WATER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pokemon-card type-grass">
+                <div class="pokemon-card-header">
+                    <h3 class="pokemon-name">BULBASAUR</h3>
+                    <div class="pokemon-id">#001</div>
+                </div>
+                <div class="pokemon-card-body">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png" alt="Bulbasaur" class="pokemon-image">
+                    <div class="pokemon-info">
+                        <div class="pokemon-types">
+                            <span class="pokemon-type type-grass">GRASS</span>
+                            <span class="pokemon-type type-poison">POISON</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
