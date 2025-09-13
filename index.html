@@ -12,59 +12,58 @@
     <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
   <body>
-    <div class="container">
-      <header class="header">
-        <div class="header-container">
-          <div class="logo-section">
-            <div class="pokeball-logo">
-              <img src="./assets/icons/pokeball.png" alt="Pokéball" />
-            </div>
-            <h1 class="main-title">Pokédex</h1>
+    <header class="header">
+      <div class="header-container">
+        <div class="logo-section">
+          <div class="pokeball-logo">
+            <img src="./assets/icons/pokeball.png" alt="Pokéball" />
           </div>
+          <h1 class="main-title">Pokédex</h1>
+        </div>
 
-          <div class="search-container">
-            <input
-              type="text"
-              id="searchInput"
-              class="search-input"
-              placeholder="Suchen nach Pokémon (min. 3 Zeichen)..."
-              autocomplete="off"
-              oninput="handleSearch(this.value)"
-            />
-          </div>
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Suchen nach Pokémon (min. 3 Zeichen)..."
+            autocomplete="off"
+            oninput="handleSearch(this.value)"
+          />
+        </div>
 
-          <div class="filters-section">
-            <div class="filters">
-              <select
-                id="typeFilter"
-                class="filter-select"
-                onchange="handleTypeFilter(this.value)"
-              >
-                <option value="">Alle Typen</option>
-                <option value="fire">Feuer</option>
-                <option value="water">Wasser</option>
-                <option value="grass">Pflanze</option>
-                <option value="electric">Elektro</option>
-                <option value="psychic">Psycho</option>
-                <option value="ice">Eis</option>
-                <option value="dragon">Drachen</option>
-                <option value="dark">Dunkel</option>
-                <option value="fighting">Kampf</option>
-                <option value="poison">Gift</option>
-                <option value="ground">Boden</option>
-                <option value="flying">Flug</option>
-                <option value="bug">Käfer</option>
-                <option value="rock">Stein</option>
-                <option value="ghost">Geist</option>
-                <option value="steel">Stahl</option>
-                <option value="fairy">Fee</option>
-                <option value="normal">Normal</option>
-              </select>
-            </div>
+        <div class="filters-section">
+          <div class="filters">
+            <select
+              id="typeFilter"
+              class="filter-select"
+              onchange="handleTypeFilter(this.value)"
+            >
+              <option value="">Alle Typen</option>
+              <option value="fire">Feuer</option>
+              <option value="water">Wasser</option>
+              <option value="grass">Pflanze</option>
+              <option value="electric">Elektro</option>
+              <option value="psychic">Psycho</option>
+              <option value="ice">Eis</option>
+              <option value="dragon">Drachen</option>
+              <option value="dark">Dunkel</option>
+              <option value="fighting">Kampf</option>
+              <option value="poison">Gift</option>
+              <option value="ground">Boden</option>
+              <option value="flying">Flug</option>
+              <option value="bug">Käfer</option>
+              <option value="rock">Stein</option>
+              <option value="ghost">Geist</option>
+              <option value="steel">Stahl</option>
+              <option value="fairy">Fee</option>
+              <option value="normal">Normal</option>
+            </select>
           </div>
         </div>
-      </header>
-
+      </div>
+    </header>
+    <div class="container">
       <div class="loading-indicator" id="loadingIndicator">
         <div class="pokeball-spinner"></div>
         <p>Lade Pokémon...</p>

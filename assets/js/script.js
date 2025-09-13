@@ -33,11 +33,11 @@ let globals = {
 };
 
 /**
- * Initialize DOM elements and store them in globals.elements
- * @returns {void}
+ * Get DOM elements object
+ * @returns {Object} Object containing all DOM elements
  */
-function initElements() {
-  globals.elements = {
+function getDOMElements() {
+  return {
     searchInput: document.getElementById("searchInput"),
     typeFilter: document.getElementById("typeFilter"),
     pokemonGrid: document.getElementById("pokemonGrid"),
@@ -47,6 +47,14 @@ function initElements() {
     pokemonOverlay: document.getElementById("pokemonOverlay"),
     overlayPokemonDetails: document.getElementById("overlayPokemonDetails"),
   };
+}
+
+/**
+ * Initialize DOM elements and store them in globals.elements
+ * @returns {void}
+ */
+function initElements() {
+  globals.elements = getDOMElements();
 }
 
 /**
@@ -123,6 +131,33 @@ async function loadMorePokemon() {
 }
 
 /**
+ * Calculate starting index for Pokemon display
+ * @param {boolean} append - Whether to append to existing data
+ * @param {Array} pokemonList - Array of Pokemon objects
+ * @returns {number} Starting index
+ */
+function calculateStartIndex(append, pokemonList) {
+  return append ? globals.allPokemon.length - pokemonList.length : 0;
+}
+
+/**
+ * Create and append Pokemon cards to grid
+ * @param {Array} pokemonList - Array of Pokemon objects
+ * @param {number} startIndex - Starting index for card creation
+ * @returns {void}
+ */
+async function createAndAppendCards(pokemonList, startIndex) {
+  for (let i = 0; i < pokemonList.length; i++) {
+    const pokemon = pokemonList[i];
+    const globalIndex = startIndex + i;
+    const card = await createPokemonCard(pokemon, globalIndex);
+    if (card) {
+      globals.elements.pokemonGrid.appendChild(card);
+    }
+  }
+}
+
+/**
  * Display Pokemon cards in the grid
  * @param {Array} pokemonList - Array of Pokemon objects to display
  * @param {boolean} [append=false] - Whether to append cards or replace existing ones
@@ -133,18 +168,8 @@ async function displayPokemon(pokemonList, append = false) {
     globals.elements.pokemonGrid.innerHTML = "";
   }
 
-  const startIndex = append
-    ? globals.allPokemon.length - pokemonList.length
-    : 0;
-
-  for (let i = 0; i < pokemonList.length; i++) {
-    const pokemon = pokemonList[i];
-    const globalIndex = startIndex + i;
-    const card = await createPokemonCard(pokemon, globalIndex);
-    if (card) {
-      globals.elements.pokemonGrid.appendChild(card);
-    }
-  }
+  const startIndex = calculateStartIndex(append, pokemonList);
+  await createAndAppendCards(pokemonList, startIndex);
 }
 
 /**
@@ -193,6 +218,30 @@ async function createPokemonCard(pokemon, index) {
 }
 
 /**
+ * Check if search term is valid (empty or >= 3 characters)
+ * @param {string} searchTerm - Trimmed search term
+ * @returns {boolean} True if valid, false otherwise
+ */
+function isValidSearchTerm(searchTerm) {
+  return searchTerm.length === 0 || searchTerm.length >= 3;
+}
+
+/**
+ * Check if Pokemon card matches search criteria
+ * @param {HTMLElement} card - Pokemon card element
+ * @param {string} searchTerm - Search term to match
+ * @returns {boolean} True if matches, false otherwise
+ */
+function cardMatchesSearch(card, searchTerm) {
+  const pokemonName = card.querySelector('.pokemon-name').textContent.toLowerCase();
+  const pokemonId = card.querySelector('.pokemon-id').textContent;
+  
+  return searchTerm === '' || 
+         pokemonName.includes(searchTerm) || 
+         pokemonId.includes(searchTerm);
+}
+
+/**
  * Handle search input changes
  * @param {string} query - Search query string
  * @returns {void}
@@ -200,21 +249,15 @@ async function createPokemonCard(pokemon, index) {
 function handleSearch(query) {
   const searchTerm = query.toLowerCase().trim();
   
-  if (searchTerm.length < 3 && searchTerm.length > 0) {
+  if (!isValidSearchTerm(searchTerm)) {
     return;
   }
   
   const pokemonCards = document.querySelectorAll('.pokemon-card');
   
   pokemonCards.forEach(card => {
-    const pokemonName = card.querySelector('.pokemon-name').textContent.toLowerCase();
-    const pokemonId = card.querySelector('.pokemon-id').textContent;
-    
-    const matchesSearch = searchTerm === '' || 
-                         pokemonName.includes(searchTerm) || 
-                         pokemonId.includes(searchTerm);
-    
-    card.style.display = matchesSearch ? 'flex' : 'none';
+    const matches = cardMatchesSearch(card, searchTerm);
+    card.style.display = matches ? 'flex' : 'none';
   });
 }
 

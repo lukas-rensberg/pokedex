@@ -1,4 +1,5 @@
 /**
+ * @fileoverview Template functions for Pokemon cards
  * @author Lukas Rensberg
  * @version 1.0.2
  */
@@ -55,8 +56,101 @@ function createErrorTemplate(error) {
 }
 
 /**
+ * Create overlay header HTML
+ * @param {Object} pokemonData - Pokemon data
+ * @returns {string} Header HTML
+ */
+function createOverlayHeader(pokemonData) {
+  return `
+    <div class="overlay-pokemon-header">
+      <h2 class="overlay-pokemon-name">${pokemonData.name.toUpperCase()}</h2>
+      <div class="overlay-pokemon-id">#${pokemonData.id
+        .toString()
+        .padStart(3, "0")}</div>
+    </div>`;
+}
+
+/**
+ * Create overlay image section HTML
+ * @param {Object} pokemonData - Pokemon data
+ * @param {string} typesHtml - Types HTML
+ * @returns {string} Image section HTML
+ */
+function createOverlayImageSection(pokemonData, typesHtml) {
+  return `
+    <div class="overlay-pokemon-image-section">
+      <img 
+        src="${
+          pokemonData.sprites.other["official-artwork"].front_default ||
+          pokemonData.sprites.front_default
+        }" 
+        alt="${pokemonData.name}" 
+        class="overlay-pokemon-image"
+      >
+      <div class="overlay-pokemon-types">
+        ${typesHtml}
+      </div>
+    </div>`;
+}
+
+/**
+ * Create overlay details section HTML
+ * @param {Object} pokemonData - Pokemon data
+ * @param {string} abilitiesHtml - Abilities HTML
+ * @returns {string} Details section HTML
+ */
+function createOverlayDetailsSection(pokemonData, abilitiesHtml) {
+  return `
+    <div class="overlay-pokemon-details-section">
+      <h3 class="overlay-details-title">Details</h3>
+      <div class="overlay-detail-item">
+        <span class="overlay-detail-label">Größe</span>
+        <span class="overlay-detail-value">${(
+          pokemonData.height / 10
+        ).toFixed(1)} m</span>
+      </div>
+      <div class="overlay-detail-item">
+        <span class="overlay-detail-label">Gewicht</span>
+        <span class="overlay-detail-value">${(
+          pokemonData.weight / 10
+        ).toFixed(1)} kg</span>
+      </div>
+      <div class="overlay-detail-item">
+        <span class="overlay-detail-label">Basis-Erfahrung</span>
+        <span class="overlay-detail-value">${
+          pokemonData.base_experience || "Unbekannt"
+        }</span>
+      </div>
+      <div class="overlay-detail-item">
+        <span class="overlay-detail-label">Fähigkeiten</span>
+        <span class="overlay-detail-value">
+          ${abilitiesHtml}
+        </span>
+      </div>
+    </div>`;
+}
+
+/**
+ * Create overlay info section HTML
+ * @param {string} statsHtml - Stats HTML
+ * @param {string} detailsHtml - Details HTML
+ * @returns {string} Info section HTML
+ */
+function createOverlayInfoSection(statsHtml, detailsHtml) {
+  return `
+    <div class="overlay-pokemon-info">
+      <div class="overlay-pokemon-stats">
+        <h3 class="overlay-stats-title">Basiswerte</h3>
+        ${statsHtml}
+      </div>
+      ${detailsHtml}
+    </div>`;
+}
+
+/**
  * Create HTML template for Pokemon overlay detailed view
  * @param {Object} pokemonData - Complete Pokemon data from API
+ * @param {string} typesHtml - HTML string for Pokemon types
  * @param {string} abilitiesHtml - HTML string for Pokemon abilities
  * @param {string} statsHtml - HTML string for Pokemon stats
  * @returns {string} HTML template for detailed Pokemon overlay
@@ -67,63 +161,16 @@ function createPokemonOverlayTemplate(
   abilitiesHtml,
   statsHtml
 ) {
+  const headerHtml = createOverlayHeader(pokemonData);
+  const imageHtml = createOverlayImageSection(pokemonData, typesHtml);
+  const detailsHtml = createOverlayDetailsSection(pokemonData, abilitiesHtml);
+  const infoHtml = createOverlayInfoSection(statsHtml, detailsHtml);
+
   return `
-    <div class="overlay-pokemon-header">
-      <h2 class="overlay-pokemon-name">${pokemonData.name.toUpperCase()}</h2>
-      <div class="overlay-pokemon-id">#${pokemonData.id
-        .toString()
-        .padStart(3, "0")}</div>
-    </div>
-
+    ${headerHtml}
     <div class="overlay-pokemon-content">
-      <div class="overlay-pokemon-image-section">
-        <img 
-          src="${
-            pokemonData.sprites.other["official-artwork"].front_default ||
-            pokemonData.sprites.front_default
-          }" 
-          alt="${pokemonData.name}" 
-          class="overlay-pokemon-image"
-        >
-        <div class="overlay-pokemon-types">
-          ${typesHtml}
-        </div>
-      </div>
-
-      <div class="overlay-pokemon-info">
-        <div class="overlay-pokemon-stats">
-          <h3 class="overlay-stats-title">Basiswerte</h3>
-          ${statsHtml}
-        </div>
-
-        <div class="overlay-pokemon-details-section">
-          <h3 class="overlay-details-title">Details</h3>
-          <div class="overlay-detail-item">
-            <span class="overlay-detail-label">Größe</span>
-            <span class="overlay-detail-value">${(
-              pokemonData.height / 10
-            ).toFixed(1)} m</span>
-          </div>
-          <div class="overlay-detail-item">
-            <span class="overlay-detail-label">Gewicht</span>
-            <span class="overlay-detail-value">${(
-              pokemonData.weight / 10
-            ).toFixed(1)} kg</span>
-          </div>
-          <div class="overlay-detail-item">
-            <span class="overlay-detail-label">Basis-Erfahrung</span>
-            <span class="overlay-detail-value">${
-              pokemonData.base_experience || "Unbekannt"
-            }</span>
-          </div>
-          <div class="overlay-detail-item">
-            <span class="overlay-detail-label">Fähigkeiten</span>
-            <span class="overlay-detail-value">
-              ${abilitiesHtml}
-            </span>
-          </div>
-        </div>
-      </div>
+      ${imageHtml}
+      ${infoHtml}
     </div>
   `;
 }
