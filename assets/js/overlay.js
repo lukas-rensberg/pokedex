@@ -198,9 +198,19 @@ async function loadOverlayPokemonData(index) {
  * @param {Object} pokemonData - Pokemon data to display
  * @returns {void}
  */
-function displayOverlayPokemon(pokemonData, abilitiesHtml) {
+function displayOverlayPokemon(
+  pokemonData,
+  abilitiesHtml,
+  typesHtml,
+  statsHtml
+) {
   globals.elements.overlayPokemonDetails.innerHTML =
-    createPokemonOverlayTemplate(pokemonData, abilitiesHtml);
+    createPokemonOverlayTemplate(
+      pokemonData,
+      abilitiesHtml,
+      typesHtml,
+      statsHtml
+    );
 }
 
 /**
