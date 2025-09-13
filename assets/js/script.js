@@ -1,12 +1,19 @@
 /**
- * Pokédx App - Functional Approach
+ * @fileoverview Script for the Pokédex App
  * @author Lukas Rensberg
  * @version 1.0.2
  */
 
 /**
  * Global application state
+ * @global
  * @type {Object}
+ * @property {string} apiUrl - The URL of the Pokédex API
+ * @property {number} pokemonPerPage - The number of Pokémon to load per page
+ * @property {number} currentOffset - The current offset of the Pokémon to load
+ * @property {boolean} isLoading - Whether the Pokédex is loading
+ * @property {Array} allPokemon - The array of all Pokémon
+ * @property {Object} elements - The DOM elements of the Pokédex
  * lines: 8
  */
 let globals = {
@@ -20,6 +27,7 @@ let globals = {
 
 /**
  * Initialize DOM elements and store them in globals.elements
+ * @returns {void}
  * lines: 10
  */
 function initElements() {
@@ -35,6 +43,7 @@ function initElements() {
 
 /**
  * Show loading indicator and hide pokemon grid
+ * @returns {void}
  * lines: 5
  */
 function showLoading() {
@@ -45,6 +54,7 @@ function showLoading() {
 
 /**
  * Hide loading indicator and show pokemon grid
+ * @returns {void}
  * lines: 5
  */
 function hideLoading() {
@@ -57,6 +67,7 @@ function hideLoading() {
  * Fetch Pokemon data from API
  * @param {number} offset - Starting offset for pagination
  * @param {boolean} [append=false] - Whether to append to existing data or replace
+ * @returns {void}
  * lines: 10
  */
 async function fetchPokemon(offset, append = false) {
@@ -72,6 +83,7 @@ async function fetchPokemon(offset, append = false) {
 
 /**
  * Load initial Pokemon data on app startup
+ * @returns {void}
  * lines: 12
  */
 async function loadInitialPokemon() {
@@ -89,6 +101,7 @@ async function loadInitialPokemon() {
 
 /**
  * Load more Pokemon data for pagination
+ * @returns {void}
  * lines: 14
  */
 async function loadMorePokemon() {
@@ -110,6 +123,7 @@ async function loadMorePokemon() {
  * Display Pokemon cards in the grid
  * @param {Array} pokemonList - Array of Pokemon objects to display
  * @param {boolean} [append=false] - Whether to append cards or replace existing ones
+ * @returns {void}
  * lines: 12
  */
 async function displayPokemon(pokemonList, append = false) {
@@ -174,6 +188,7 @@ async function createPokemonCard(pokemon) {
  * Handle search input changes
  * @param {string} query - Search query string
  * lines: 3
+ * @returns {void}
  */
 function handleSearch(query) {
   // TODO: Implement search functionality
@@ -183,6 +198,7 @@ function handleSearch(query) {
  * Handle type filter selection changes
  * @param {string} type - Selected Pokemon type
  * lines: 3
+ * @returns {void}
  */
 function handleTypeFilter(type) {
   // TODO: Implement type filtering
@@ -191,6 +207,7 @@ function handleTypeFilter(type) {
 /**
  * Update the load more button text and visibility
  * lines: 11
+ * @returns {void}
  */
 function updateLoadMoreButton() {
   const remainingCount = Math.max(0, 1010 - globals.currentOffset);
@@ -208,6 +225,7 @@ function updateLoadMoreButton() {
  * Display error message in the Pokemon grid
  * @param {string} error - Error message to display
  * lines: 3
+ * @returns {void}
  */
 function showError(error) {
   globals.elements.pokemonGrid.innerHTML = createErrorTemplate(error);
@@ -216,6 +234,7 @@ function showError(error) {
 /**
  * Initialize the Pokédx application
  * lines: 4
+ * @returns {void}
  */
 function pokedexInit() {
   initElements();
