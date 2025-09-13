@@ -1,5 +1,4 @@
 /**
- * @fileoverview Script for the Pokédex App
  * @author Lukas Rensberg
  * @version 1.0.2
  */
@@ -18,7 +17,6 @@
  * @property {boolean} overlay.isOpen - Whether the overlay is open
  * @property {number} overlay.currentIndex - The current index of the Pokemon in the overlay
  * @property {Array} overlay.pokemonData - The array of Pokemon data in the overlay
- * lines: 13
  */
 let globals = {
   apiUrl: "https://pokeapi.co/api/v2",
@@ -37,7 +35,6 @@ let globals = {
 /**
  * Initialize DOM elements and store them in globals.elements
  * @returns {void}
- * lines: 11
  */
 function initElements() {
   globals.elements = {
@@ -55,7 +52,6 @@ function initElements() {
 /**
  * Show loading indicator and hide pokemon grid
  * @returns {void}
- * lines: 5
  */
 function showLoading() {
   globals.isLoading = true;
@@ -66,7 +62,6 @@ function showLoading() {
 /**
  * Hide loading indicator and show pokemon grid
  * @returns {void}
- * lines: 5
  */
 function hideLoading() {
   globals.isLoading = false;
@@ -79,7 +74,6 @@ function hideLoading() {
  * @param {number} offset - Starting offset for pagination
  * @param {boolean} [append=false] - Whether to append to existing data or replace
  * @returns {void}
- * lines: 10
  */
 async function fetchPokemon(offset, append = false) {
   const url = `${globals.apiUrl}/pokemon?limit=${globals.pokemonPerPage}&offset=${offset}`;
@@ -95,7 +89,6 @@ async function fetchPokemon(offset, append = false) {
 /**
  * Load initial Pokemon data on app startup
  * @returns {void}
- * lines: 12
  */
 async function loadInitialPokemon() {
   showLoading();
@@ -113,7 +106,6 @@ async function loadInitialPokemon() {
 /**
  * Load more Pokemon data for pagination
  * @returns {void}
- * lines: 14
  */
 async function loadMorePokemon() {
   if (globals.isLoading) return;
@@ -135,7 +127,6 @@ async function loadMorePokemon() {
  * @param {Array} pokemonList - Array of Pokemon objects to display
  * @param {boolean} [append=false] - Whether to append cards or replace existing ones
  * @returns {void}
- * lines: 12
  */
 async function displayPokemon(pokemonList, append = false) {
   if (!append) {
@@ -162,7 +153,6 @@ async function displayPokemon(pokemonList, append = false) {
  * @param {string} typesHtml - HTML string for Pokemon types
  * @param {number} index - Index of Pokemon in the current list
  * @returns {HTMLElement} Pokemon card element
- * lines: 9
  */
 function createCardElement(pokemonData, typesHtml, index) {
   const card = document.createElement("div");
@@ -178,7 +168,6 @@ function createCardElement(pokemonData, typesHtml, index) {
  * Generate HTML string for Pokemon types
  * @param {Array} types - Array of Pokemon type objects
  * @returns {string} HTML string for types
- * lines: 3
  */
 function getPokemonTypesHtml(types) {
   return types.map((type) => createPokemonTypeTemplate(type)).join("");
@@ -189,7 +178,6 @@ function getPokemonTypesHtml(types) {
  * @param {Object} pokemon - Basic Pokemon object with URL
  * @param {number} index - Index of Pokemon in the global list
  * @returns {Promise<HTMLElement|null>} Pokemon card element or null if error
- * lines: 13
  */
 async function createPokemonCard(pokemon, index) {
   try {
@@ -207,26 +195,49 @@ async function createPokemonCard(pokemon, index) {
 /**
  * Handle search input changes
  * @param {string} query - Search query string
- * lines: 3
  * @returns {void}
  */
 function handleSearch(query) {
-  // TODO: Implement search functionality
+  const searchTerm = query.toLowerCase().trim();
+  
+  if (searchTerm.length < 3 && searchTerm.length > 0) {
+    return;
+  }
+  
+  const pokemonCards = document.querySelectorAll('.pokemon-card');
+  
+  pokemonCards.forEach(card => {
+    const pokemonName = card.querySelector('.pokemon-name').textContent.toLowerCase();
+    const pokemonId = card.querySelector('.pokemon-id').textContent;
+    
+    const matchesSearch = searchTerm === '' || 
+                         pokemonName.includes(searchTerm) || 
+                         pokemonId.includes(searchTerm);
+    
+    card.style.display = matchesSearch ? 'flex' : 'none';
+  });
 }
 
 /**
  * Handle type filter selection changes
  * @param {string} type - Selected Pokemon type
- * lines: 3
  * @returns {void}
  */
 function handleTypeFilter(type) {
-  // TODO: Implement type filtering
+  const pokemonCards = document.querySelectorAll('.pokemon-card');
+  
+  pokemonCards.forEach(card => {
+    if (type === '') {
+      card.style.display = 'flex';
+    } else {
+      const hasType = card.classList.contains(`type-${type}`);
+      card.style.display = hasType ? 'flex' : 'none';
+    }
+  });
 }
 
 /**
  * Update the load more button text and visibility
- * lines: 11
  * @returns {void}
  */
 function updateLoadMoreButton() {
@@ -244,7 +255,6 @@ function updateLoadMoreButton() {
 /**
  * Display error message in the Pokemon grid
  * @param {string} error - Error message to display
- * lines: 3
  * @returns {void}
  */
 function showError(error) {
@@ -253,7 +263,6 @@ function showError(error) {
 
 /**
  * Initialize the Pokédx application
- * lines: 4
  * @returns {void}
  */
 function pokedexInit() {

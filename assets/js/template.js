@@ -1,5 +1,4 @@
 /**
- * @fileoverview Template functions for Pokemon cards
  * @author Lukas Rensberg
  * @version 1.0.2
  */
