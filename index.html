@@ -84,6 +84,26 @@
       </div>
     </div>
 
+    <!-- Pokemon Overlay -->
+    <div class="pokemon-overlay" id="pokemonOverlay">
+      <div class="overlay-background" onclick="closePokemonOverlay()"></div>
+      <div class="overlay-content">
+        <button class="overlay-close" onclick="closePokemonOverlay()">×</button>
+        <div class="nav-btns">
+          <button
+            class="overlay-nav overlay-prev"
+            onclick="navigatePokemon(-1)"
+          >
+            ‹
+          </button>
+          <button class="overlay-nav overlay-next" onclick="navigatePokemon(1)">
+            ›
+          </button>
+        </div>
+        <div class="overlay-pokemon-details" id="overlayPokemonDetails"></div>
+      </div>
+    </div>
+
     <script src="./assets/js/script.js"></script>
     <script src="./assets/js/template.js"></script>
   </body>

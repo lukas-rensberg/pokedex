@@ -54,3 +54,98 @@ function createErrorTemplate(error) {
         </div>
     `;
 }
+
+/**
+ * Create HTML template for Pokemon overlay detailed view
+ * @param {Object} pokemonData - Complete Pokemon data from API
+ * @returns {string} HTML template for detailed Pokemon overlay
+ */
+function createPokemonOverlayTemplate(pokemonData) {
+  const typesHtml = pokemonData.types
+    .map(
+      (type) =>
+        `<span class="overlay-pokemon-type type-${type.type.name}">${type.type.name}</span>`
+    )
+    .join("");
+
+  const statsHtml = pokemonData.stats
+    .map((stat) => {
+      const statValue = stat.base_stat;
+      const statPercentage = Math.min((statValue / 150) * 100, 100); // Max 150 for percentage calculation
+      return `
+        <div class="overlay-stat-item">
+          <span class="overlay-stat-name">${stat.stat.name.replace(
+            "-",
+            " "
+          )}</span>
+          <div class="overlay-stat-bar">
+            <div class="overlay-stat-fill" style="width: ${statPercentage}%"></div>
+          </div>
+          <span class="overlay-stat-value">${statValue}</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  return `
+    <div class="overlay-pokemon-header">
+      <h2 class="overlay-pokemon-name">${pokemonData.name.toUpperCase()}</h2>
+      <div class="overlay-pokemon-id">#${pokemonData.id
+        .toString()
+        .padStart(3, "0")}</div>
+    </div>
+
+    <div class="overlay-pokemon-content">
+      <div class="overlay-pokemon-image-section">
+        <img 
+          src="${
+            pokemonData.sprites.other["official-artwork"].front_default ||
+            pokemonData.sprites.front_default
+          }" 
+          alt="${pokemonData.name}" 
+          class="overlay-pokemon-image"
+        >
+        <div class="overlay-pokemon-types">
+          ${typesHtml}
+        </div>
+      </div>
+
+      <div class="overlay-pokemon-info">
+        <div class="overlay-pokemon-stats">
+          <h3 class="overlay-stats-title">Basiswerte</h3>
+          ${statsHtml}
+        </div>
+
+        <div class="overlay-pokemon-details-section">
+          <h3 class="overlay-details-title">Details</h3>
+          <div class="overlay-detail-item">
+            <span class="overlay-detail-label">Größe</span>
+            <span class="overlay-detail-value">${(
+              pokemonData.height / 10
+            ).toFixed(1)} m</span>
+          </div>
+          <div class="overlay-detail-item">
+            <span class="overlay-detail-label">Gewicht</span>
+            <span class="overlay-detail-value">${(
+              pokemonData.weight / 10
+            ).toFixed(1)} kg</span>
+          </div>
+          <div class="overlay-detail-item">
+            <span class="overlay-detail-label">Basis-Erfahrung</span>
+            <span class="overlay-detail-value">${
+              pokemonData.base_experience || "Unbekannt"
+            }</span>
+          </div>
+          <div class="overlay-detail-item">
+            <span class="overlay-detail-label">Fähigkeiten</span>
+            <span class="overlay-detail-value">
+              ${pokemonData.abilities
+                .map((ability) => ability.ability.name)
+                .join(", ")}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}

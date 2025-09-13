@@ -14,7 +14,11 @@
  * @property {boolean} isLoading - Whether the Pokédex is loading
  * @property {Array} allPokemon - The array of all Pokémon
  * @property {Object} elements - The DOM elements of the Pokédex
- * lines: 8
+ * @property {Object} overlay - The overlay state
+ * @property {boolean} overlay.isOpen - Whether the overlay is open
+ * @property {number} overlay.currentIndex - The current index of the Pokemon in the overlay
+ * @property {Array} overlay.pokemonData - The array of Pokemon data in the overlay
+ * lines: 13
  */
 let globals = {
   apiUrl: "https://pokeapi.co/api/v2",
@@ -23,12 +27,17 @@ let globals = {
   isLoading: false,
   allPokemon: [],
   elements: {},
+  overlay: {
+    isOpen: false,
+    currentIndex: 0,
+    pokemonData: [],
+  },
 };
 
 /**
  * Initialize DOM elements and store them in globals.elements
  * @returns {void}
- * lines: 10
+ * lines: 11
  */
 function initElements() {
   globals.elements = {
@@ -38,6 +47,8 @@ function initElements() {
     loadingIndicator: document.getElementById("loadingIndicator"),
     loadMoreButton: document.getElementById("loadMoreButton"),
     loadMoreCount: document.getElementById("loadMoreCount"),
+    pokemonOverlay: document.getElementById("pokemonOverlay"),
+    overlayPokemonDetails: document.getElementById("overlayPokemonDetails"),
   };
 }
 
@@ -131,8 +142,14 @@ async function displayPokemon(pokemonList, append = false) {
     globals.elements.pokemonGrid.innerHTML = "";
   }
 
-  for (const pokemon of pokemonList) {
-    const card = await createPokemonCard(pokemon);
+  const startIndex = append
+    ? globals.allPokemon.length - pokemonList.length
+    : 0;
+
+  for (let i = 0; i < pokemonList.length; i++) {
+    const pokemon = pokemonList[i];
+    const globalIndex = startIndex + i;
+    const card = await createPokemonCard(pokemon, globalIndex);
     if (card) {
       globals.elements.pokemonGrid.appendChild(card);
     }
@@ -143,15 +160,17 @@ async function displayPokemon(pokemonList, append = false) {
  * Create a DOM element for a Pokemon card
  * @param {Object} pokemonData - Pokemon data from API
  * @param {string} typesHtml - HTML string for Pokemon types
+ * @param {number} index - Index of Pokemon in the current list
  * @returns {HTMLElement} Pokemon card element
- * lines: 8
+ * lines: 9
  */
-function createCardElement(pokemonData, typesHtml) {
+function createCardElement(pokemonData, typesHtml, index) {
   const card = document.createElement("div");
   const primaryType = pokemonData.types[0].type.name;
 
   card.className = `pokemon-card type-${primaryType}`;
   card.innerHTML = createPokemonCardTemplate(pokemonData, typesHtml);
+  card.onclick = () => openPokemonOverlay(index);
   return card;
 }
 
@@ -168,15 +187,16 @@ function getPokemonTypesHtml(types) {
 /**
  * Create a complete Pokemon card with data fetching
  * @param {Object} pokemon - Basic Pokemon object with URL
+ * @param {number} index - Index of Pokemon in the global list
  * @returns {Promise<HTMLElement|null>} Pokemon card element or null if error
- * lines: 12
+ * lines: 13
  */
-async function createPokemonCard(pokemon) {
+async function createPokemonCard(pokemon, index) {
   try {
     const response = await fetch(pokemon.url);
     const pokemonData = await response.json();
     const typesHtml = getPokemonTypesHtml(pokemonData.types);
-    const card = createCardElement(pokemonData, typesHtml);
+    const card = createCardElement(pokemonData, typesHtml, index);
 
     return card;
   } catch (error) {
@@ -232,6 +252,117 @@ function showError(error) {
 }
 
 /**
+ * Open Pokemon overlay with detailed view
+ * @param {number} pokemonIndex - Index of Pokemon in the current displayed list
+ * @returns {void}
+ */
+async function openPokemonOverlay(pokemonIndex) {
+  console.log("openPokemonOverlay:", pokemonIndex);
+  globals.overlay.currentIndex = pokemonIndex;
+  globals.overlay.isOpen = true;
+
+  // Prevent body scrolling
+  document.body.style.overflow = "hidden";
+
+  // Show overlay
+  globals.elements.pokemonOverlay.classList.add("active");
+
+  // Load and display Pokemon data
+  await loadOverlayPokemonData(pokemonIndex);
+}
+
+/**
+ * Close Pokemon overlay
+ * @returns {void}
+ */
+function closePokemonOverlay() {
+  globals.overlay.isOpen = false;
+
+  // Restore body scrolling
+  document.body.style.overflow = "";
+
+  // Hide overlay
+  globals.elements.pokemonOverlay.classList.remove("active");
+}
+
+/**
+ * Navigate to previous or next Pokemon in overlay
+ * @param {number} direction - Direction to navigate (-1 for previous, 1 for next)
+ * @returns {void}
+ */
+async function navigatePokemon(direction) {
+  if (!globals.overlay.isOpen) return;
+
+  const newIndex = globals.overlay.currentIndex + direction;
+
+  // Check bounds against the total Pokemon available
+  if (newIndex < 0 || newIndex >= globals.allPokemon.length) return;
+
+  globals.overlay.currentIndex = newIndex;
+  await loadOverlayPokemonData(newIndex);
+}
+
+/**
+ * Load Pokemon data for overlay display
+ * @param {number} index - Index of Pokemon to load
+ * @returns {void}
+ */
+async function loadOverlayPokemonData(index) {
+  try {
+    // Check if we already have the data
+    if (globals.overlay.pokemonData[index]) {
+      displayOverlayPokemon(globals.overlay.pokemonData[index]);
+      updateOverlayNavigation();
+      return;
+    }
+
+    // Fetch Pokemon data if not cached
+    const pokemonUrl = globals.allPokemon[index]?.url;
+    if (!pokemonUrl) return;
+
+    const response = await fetch(pokemonUrl);
+    const pokemonData = await response.json();
+
+    // Cache the data
+    globals.overlay.pokemonData[index] = pokemonData;
+
+    // Display Pokemon
+    displayOverlayPokemon(pokemonData);
+    updateOverlayNavigation();
+  } catch (error) {
+    console.error("Error loading Pokemon data for overlay:", error);
+  }
+}
+
+/**
+ * Display Pokemon data in overlay
+ * @param {Object} pokemonData - Pokemon data to display
+ * @returns {void}
+ */
+function displayOverlayPokemon(pokemonData) {
+  globals.elements.overlayPokemonDetails.innerHTML =
+    createPokemonOverlayTemplate(pokemonData);
+}
+
+/**
+ * Update navigation buttons state
+ * @returns {void}
+ */
+function updateOverlayNavigation() {
+  const prevButton = document.querySelector(".overlay-prev");
+  const nextButton = document.querySelector(".overlay-next");
+
+  if (prevButton) {
+    prevButton.disabled = globals.overlay.currentIndex <= 0;
+  }
+
+  if (nextButton) {
+    nextButton.disabled =
+      globals.overlay.currentIndex >= globals.allPokemon.length - 1;
+  }
+}
+
+/**
  * Initialize the Pokédx application
  * lines: 4
  * @returns {void}
@@ -239,6 +370,30 @@ function showError(error) {
 function pokedexInit() {
   initElements();
   loadInitialPokemon();
+
+  // Add keyboard navigation for overlay
+  document.addEventListener("keydown", handleKeyboardNavigation);
+}
+
+/**
+ * Handle keyboard navigation in overlay
+ * @param {KeyboardEvent} event - Keyboard event
+ * @returns {void}
+ */
+function handleKeyboardNavigation(event) {
+  if (!globals.overlay.isOpen) return;
+
+  switch (event.key) {
+    case "Escape":
+      closePokemonOverlay();
+      break;
+    case "ArrowLeft":
+      navigatePokemon(-1);
+      break;
+    case "ArrowRight":
+      navigatePokemon(1);
+      break;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", pokedexInit);
