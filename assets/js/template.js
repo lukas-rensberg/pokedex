@@ -58,35 +58,16 @@ function createErrorTemplate(error) {
 /**
  * Create HTML template for Pokemon overlay detailed view
  * @param {Object} pokemonData - Complete Pokemon data from API
+ * @param {string} abilitiesHtml - HTML string for Pokemon abilities
+ * @param {string} statsHtml - HTML string for Pokemon stats
  * @returns {string} HTML template for detailed Pokemon overlay
  */
-function createPokemonOverlayTemplate(pokemonData) {
-  const typesHtml = pokemonData.types
-    .map(
-      (type) =>
-        `<span class="overlay-pokemon-type type-${type.type.name}">${type.type.name}</span>`
-    )
-    .join("");
-
-  const statsHtml = pokemonData.stats
-    .map((stat) => {
-      const statValue = stat.base_stat;
-      const statPercentage = Math.min((statValue / 150) * 100, 100); // Max 150 for percentage calculation
-      return `
-        <div class="overlay-stat-item">
-          <span class="overlay-stat-name">${stat.stat.name.replace(
-            "-",
-            " "
-          )}</span>
-          <div class="overlay-stat-bar">
-            <div class="overlay-stat-fill" style="width: ${statPercentage}%"></div>
-          </div>
-          <span class="overlay-stat-value">${statValue}</span>
-        </div>
-      `;
-    })
-    .join("");
-
+function createPokemonOverlayTemplate(
+  pokemonData,
+  typesHtml,
+  abilitiesHtml,
+  statsHtml
+) {
   return `
     <div class="overlay-pokemon-header">
       <h2 class="overlay-pokemon-name">${pokemonData.name.toUpperCase()}</h2>
@@ -139,13 +120,42 @@ function createPokemonOverlayTemplate(pokemonData) {
           <div class="overlay-detail-item">
             <span class="overlay-detail-label">Fähigkeiten</span>
             <span class="overlay-detail-value">
-              ${pokemonData.abilities
-                .map((ability) => ability.ability.name)
-                .join(", ")}
+              ${abilitiesHtml}
             </span>
           </div>
         </div>
       </div>
     </div>
   `;
+}
+
+/**
+ * Create HTML template for Pokemon overlay type badge
+ * @param {Object} type - Pokemon type object from API
+ * @returns {string} HTML template for type badge
+ */
+function createPokemonOverlayTypeTemplate(type) {
+  return `<span class="overlay-pokemon-type type-${type.type.name}">${type.type.name}</span>`;
+}
+
+/**
+ * Create HTML template for Pokemon overlay stat
+ * @param {Object} stat - Pokemon stat object from API
+ * @param {number} statValue - Value of the stat
+ * @param {number} statPercentage - Percentage of the stat
+ * @returns {string} HTML template for stat
+ */
+function createPokemonOverlayStatTemplate(stat, statValue, statPercentage) {
+  return `
+        <div class="overlay-stat-item">
+          <span class="overlay-stat-name">${stat.stat.name.replace(
+            "-",
+            " "
+          )}</span>
+          <div class="overlay-stat-bar">
+            <div class="overlay-stat-fill" style="width: ${statPercentage}%"></div>
+          </div>
+          <span class="overlay-stat-value">${statValue}</span>
+        </div>
+      `;
 }
